@@ -1,0 +1,37 @@
+version: "3"
+services:
+    db-container:
+        container_name: db-container
+        image: oracle-xe-23.1
+        volumes:
+            - apex-storage:/opt/oracle/oradata
+            - /etc/timezone:/etc/timezone:ro
+            - /etc/localtime:/etc/localtime:ro
+        ports:
+            - 1251:1251
+        hostname: database
+        environment:
+            - ORACLE_PWD=1230123
+        restart: always
+
+    ords:
+        container_name: ords
+        image: ords-23.2
+        depends_on:
+            - db-container
+        volumes:
+            - /home/apex_admin/ords/:/opt/oracle/variables
+            - /etc/timezone:/etc/timezone:ro
+            - /etc/localtime:/etc/localtime:ro
+        ports:
+            - 8181:8181
+        restart: always
+
+volumes:
+    apex-storage:
+       name: apex-storage
+       external: false
+
+networks:
+  default:
+    name: apex-net
